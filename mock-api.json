@@ -1,0 +1,12 @@
+{
+  "orders": [
+    {
+      "id": "ord-001",
+      "customerId": "c-001",
+      "status": "pending",
+      "items": [
+        { "name": "Solar Panel Set", "quantity": 1 }
+      ]
+    }
+  ]
+}

@@ -50,3 +50,13 @@ clear-energy-takehome/
 - [x] Created `mock-api.json` and verified with `json-server`.
 - [x] Initialized local git repository.
 - [x] Created this `AGENT.md` to track project progress.
+- [x] Implemented `@clear-energy/shared` package (API Client + OrderCard component).
+- [x] Initialized and configured 3 Expo apps.
+- [x] Linked shared package to apps and implemented screens/4 states.
+- [x] Created exactly one unit test (`formatPrice.ts`).
+- [x] Finalized official `README.md`.
+- [x] PROJECT COMPLETE.
+
+## Next Steps
+- Review the `README.md` (Note: `README.md` is the official submission document).
+- Submit the project.

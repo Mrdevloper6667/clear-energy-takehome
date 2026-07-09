@@ -1,22 +1,15 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { Order, TripStop, PendingAction } from '../types';
 
-export type OrderMode = 'customer' | 'driver' | 'admin';
+export type OrderCardProps = 
+  | { mode: 'customer'; order: Order; onActionPress?: () => void }
+  | { mode: 'driver'; tripStop: TripStop; onActionPress?: () => void }
+  | { mode: 'admin'; actionItem: PendingAction; onActionPress?: () => void };
 
-export interface OrderCardProps {
-  mode: OrderMode;
-  order: {
-    id: string;
-    status: string;
-    customerId?: string;
-    items?: Array<{ name: string; quantity: number }>;
-  };
-  onActionPress?: () => void;
-}
-
-export const OrderCard: React.FC<OrderCardProps> = ({ mode, order, onActionPress }) => {
+export const OrderCard: React.FC<OrderCardProps> = (props) => {
   const getModeStyles = () => {
-    switch (mode) {
+    switch (props.mode) {
       case 'customer': return styles.customerContainer;
       case 'driver': return styles.driverContainer;
       case 'admin': return styles.adminContainer;
@@ -24,29 +17,61 @@ export const OrderCard: React.FC<OrderCardProps> = ({ mode, order, onActionPress
     }
   };
 
+  const renderContent = () => {
+    if (props.mode === 'customer') {
+      const { order } = props;
+      return (
+        <>
+          <Text style={styles.headerText}>Order ID: {order.id}</Text>
+          <Text style={styles.statusText}>Status: {order.status}</Text>
+          {order.sku && (
+            <View style={styles.itemsContainer}>
+              <Text style={styles.detailText}>
+                - {order.sku.qty}x {order.sku.name}
+              </Text>
+            </View>
+          )}
+        </>
+      );
+    } else if (props.mode === 'driver') {
+      const { tripStop } = props;
+      return (
+        <>
+          <Text style={styles.headerText}>Trip Stop Seq: {tripStop.seq}</Text>
+          <Text style={styles.statusText}>Status: {tripStop.status}</Text>
+          <Text style={styles.detailText}>Address: {tripStop.address}</Text>
+          <Text style={styles.detailText}>Distance: {tripStop.distanceKm} km</Text>
+          <Text style={styles.detailText}>ETA Min: {tripStop.etaMin !== null ? tripStop.etaMin : 'N/A'}</Text>
+        </>
+      );
+    } else if (props.mode === 'admin') {
+      const { actionItem } = props;
+      const breached = actionItem.ageMinutes > actionItem.slaMinutes;
+      return (
+        <>
+          <Text style={styles.headerText}>Action ID: {actionItem.id}</Text>
+          <Text style={styles.statusText}>Category: {actionItem.category}</Text>
+          <Text style={styles.detailText}>Priority: {actionItem.priority}</Text>
+          <Text style={styles.detailText}>Action: {actionItem.action}</Text>
+          {breached && (
+            <Text style={{ ...styles.detailText, color: 'red', fontWeight: 'bold' }}>
+              BREACHED WARNING! (Age: {actionItem.ageMinutes}m &gt; SLA: {actionItem.slaMinutes}m)
+            </Text>
+          )}
+        </>
+      );
+    }
+    return null;
+  };
+
   return (
     <View style={[styles.container, getModeStyles()]}>
-      <Text style={styles.headerText}>Order ID: {order.id}</Text>
-      <Text style={styles.statusText}>Status: {order.status}</Text>
-      
-      {mode === 'admin' && (
-        <Text style={styles.detailText}>Customer: {order.customerId}</Text>
-      )}
+      {renderContent()}
 
-      {mode === 'customer' && order.items && (
-        <View style={styles.itemsContainer}>
-          {order.items.map((item, index) => (
-            <Text key={index} style={styles.detailText}>
-              - {item.quantity}x {item.name}
-            </Text>
-          ))}
-        </View>
-      )}
-
-      {onActionPress && (
-        <TouchableOpacity style={styles.actionButton} onPress={onActionPress}>
+      {props.onActionPress && (
+        <TouchableOpacity style={styles.actionButton} onPress={props.onActionPress}>
           <Text style={styles.actionButtonText}>
-            {mode === 'customer' ? 'Cancel Order' : mode === 'driver' ? 'Accept Trip' : 'Approve'}
+            {props.mode === 'customer' ? 'Cancel Order' : props.mode === 'driver' ? 'Accept Trip' : 'Approve'}
           </Text>
         </TouchableOpacity>
       )}

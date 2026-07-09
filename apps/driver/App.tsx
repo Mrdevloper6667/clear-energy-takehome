@@ -5,7 +5,7 @@ import { ApiClient, OrderCard } from '@clear-energy/shared';
 const apiClient = new ApiClient({ baseUrl: 'http://localhost:4000' });
 
 export default function App() {
-  const [order, setOrder] = useState<any>(null);
+  const [tripStop, setTripStop] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
@@ -14,18 +14,18 @@ export default function App() {
     try {
       setLoading(true);
       setError(null);
-      setOrder(null);
+      setTripStop(null);
       
       abortControllerRef.current?.abort();
       const controller = new AbortController();
       abortControllerRef.current = controller;
 
-      const data = await apiClient.get<any[]>('/orders?status=pending', controller.signal);
+      const data = await apiClient.get<any[]>('/trips?driverId=d-101', controller.signal);
       
       if (data && data.length > 0) {
-        setOrder(data[0]);
+        setTripStop(data[0]);
       } else {
-        setOrder(null);
+        setTripStop(null);
       }
     } catch (err: any) {
       if (err.name !== 'AbortError') {
@@ -55,17 +55,17 @@ export default function App() {
           </View>
         )}
 
-        {!loading && !error && !order && (
+        {!loading && !error && !tripStop && (
           <View style={styles.emptyContainer}>
             <Text style={styles.emptyText}>No available trips.</Text>
             <Button title="Refresh" onPress={fetchOrder} />
           </View>
         )}
 
-        {!loading && !error && order && (
+        {!loading && !error && tripStop && (
           <OrderCard 
             mode="driver" 
-            order={order} 
+            tripStop={tripStop} 
             onActionPress={() => alert('Trip accepted')} 
           />
         )}

@@ -22,7 +22,11 @@ To strictly focus on the core requirements of the prompt within a constrained ti
 - **Extra Tests & E2E**: Kept to exactly one functional unit test (`formatPrice.ts`) as per the "One unit test" constraint.
 
 ## AI Usage Summary
-Used an AI Coding Assistant (Antigravity) to rapidly scaffold the monorepo, configure npm workspaces, and generate boilerplate code. The AI created `OrderCard.tsx`, the typed `ApiClient`, the `mock-api.json`, and initialized the 3 Expo apps. I accepted most of the structural generation but actively steered the AI to enforce the strict exclusions (no Turborepo, 1 unit test only, etc.).
+Used **Antigravity (Gemini Pro)** as the primary AI coding agent. It scaffolded the monorepo, npm workspaces, the typed `ApiClient`, `OrderCard.tsx`, `mock-api.json`, and initialized the three Expo apps.
+
+- **Accepted as-is**: folder structure, `OrderCard` component (3 modes), `formatPrice` utility, initial Expo screens.
+- **Edited/steered**: enforced "one unit test only" constraint, kept npm workspaces instead of Turborepo, resolved a git index-lock issue and a node_modules-tracking mistake made during setup.
+- **Discarded**: nothing structurally — corrections were process fixes (git locks, `.gitignore` scope), not rejected code.
 
 ## Actual Hours Spent
 1 hour
